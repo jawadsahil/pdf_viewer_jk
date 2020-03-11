@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 class PDFDocument {
   static const MethodChannel _channel =
-      const MethodChannel('flutter_plugin_pdf_viewer');
+      const MethodChannel('pdf_viewer_jk');
 
   String _filePath;
   int count;
