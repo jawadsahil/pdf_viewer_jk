@@ -1,15 +1,15 @@
-#import "FlutterPdfViewerPlugin.h"
+#import "PdfViewerJkPlugin.h"
 
-static NSString* const kDirectory = @"FlutterPdfViewerPlugin";
+static NSString* const kDirectory = @"PdfViewerJkPlugin";
 static NSString* const kFilePath = @"file:///";
 static NSString* kFileName = @"";
 
-@implementation FlutterPluginPdfViewerPlugin
+@implementation PdfViewerJkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"pdf_viewer_jk"
             binaryMessenger:[registrar messenger]];
-  FlutterPluginPdfViewerPlugin* instance = [[FlutterPluginPdfViewerPlugin alloc] init];
+  PdfViewerJkPlugin* instance = [[PdfViewerJkPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -46,7 +46,7 @@ static NSString* kFileName = @"";
 
     // Clear cache folder
     if ([[NSFileManager defaultManager] fileExistsAtPath:filePathAndDirectory]) {
-        NSLog(@"[FlutterPluginPDFViewer] Removing old documents cache");
+        NSLog(@"[PdfViewerJkPlugin] Removing old documents cache");
         [[NSFileManager defaultManager] removeItemAtPath:filePathAndDirectory error:&error];
     }
 
@@ -61,8 +61,8 @@ static NSString* kFileName = @"";
     // Generate random file size for this document
 
     kFileName = [[NSUUID UUID] UUIDString];
-    NSLog(@"[FlutterPluginPdfViewer] File has %zd pages", numberOfPages);
-    NSLog(@"[FlutterPluginPdfViewer] File will be saved in cache as %@", kFileName);
+    NSLog(@"[PdfViewerJkPlugin] File has %zd pages", numberOfPages);
+    NSLog(@"[PdfViewerJkPlugin] File will be saved in cache as %@", kFileName);
     return [NSString stringWithFormat:@"%zd", numberOfPages];
 }
 

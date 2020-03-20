@@ -23,9 +23,9 @@ import android.os.Process;
 import android.os.Handler;
 
 /**
- * FlutterPdfViewerPlugin
+ * PdfViewerJkPlugin
  */
-public class FlutterPdfViewerPlugin implements MethodCallHandler {
+public class PdfViewerJkPlugin implements MethodCallHandler {
     private static Registrar instance;
     private HandlerThread handlerThread;
     private Handler backgroundHandler;
@@ -37,7 +37,7 @@ public class FlutterPdfViewerPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdf_viewer_jk");
         instance = registrar;
-        channel.setMethodCallHandler(new FlutterPdfViewerPlugin());
+        channel.setMethodCallHandler(new PdfViewerJkPlugin());
     }
 
     @Override
