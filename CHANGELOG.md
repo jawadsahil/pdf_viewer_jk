@@ -1,3 +1,8 @@
+## [1.0.0] - 2020-03-21
+
+- version number as stable.
+- added example
+
 ## [0.0.4] - 2020-03-21
 
 - fixed issue -- ios header files missing.
