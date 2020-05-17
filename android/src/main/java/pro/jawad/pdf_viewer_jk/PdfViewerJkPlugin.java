@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -30,6 +31,7 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
     private HandlerThread handlerThread;
     private Handler backgroundHandler;
     private final Object pluginLocker = new Object();
+    private final String filePrefix = "PdfViewerJk";
 
     /**
      * Plugin registration.
@@ -85,6 +87,7 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
     private String getNumberOfPages(String filePath) {
         File pdf = new File(filePath);
         try {
+            clearCacheDir();
             PdfRenderer renderer = new PdfRenderer(ParcelFileDescriptor.open(pdf, ParcelFileDescriptor.MODE_READ_ONLY));
             Bitmap bitmap;
             final int pageCount = renderer.getPageCount();
@@ -95,12 +98,39 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
         return null;
     }
 
-    private String createTempPreview(Bitmap bmp, String name, int page) {
+ private boolean clearCacheDir() {
+        try {
+            File directory = instance.context().getCacheDir();
+            FilenameFilter myFilter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().startsWith(filePrefix.toLowerCase());
+                }
+            };
+            File[] files = directory.listFiles(myFilter);
+            // Log.d("Cache Files", "Size: " + files.length);
+            for (int i = 0; i < files.length; i++) {
+                // Log.d("Files", "FileName: " + files[i].getName());
+                files[i].delete();
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    private String getFileNameFromPath(String name) {
         String filePath = name.substring(name.lastIndexOf('/') + 1);
-        filePath = name.substring(name.lastIndexOf('.'));
+        filePath = filePath.substring(0, filePath.lastIndexOf('.'));
+        return String.format("%s-%s", filePrefix, filePath);
+    }
+
+    private String createTempPreview(Bitmap bmp, String name, int page) {
+        String fileNameOnly = getFileNameFromPath(name);
         File file;
         try {
-            String fileName = String.format("%s-%d.png", filePath, page);
+            String fileName = String.format("%s-%d.png", fileNameOnly, page);
             file = File.createTempFile(fileName, null, instance.context().getCacheDir());
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -112,7 +142,6 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
         }
         return file.getAbsolutePath();
     }
-
 
     private String getPage(String filePath, int pageNumber) {
         File pdf = new File(filePath);
