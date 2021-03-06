@@ -1,4 +1,9 @@
 # Changelog
+## [1.2.0]
+
+- updated dependencies
+- as flutter_advanced_networkimage is archived, so the code is encorporated in the plugin. [Credits](https://github.com/mchome)
+
 
 ## [1.1.0]
 

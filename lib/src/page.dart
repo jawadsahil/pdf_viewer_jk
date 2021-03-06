@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_advanced_networkimage/zoomable.dart';
+import 'fan/zoomable/zoomable_widget.dart';
 
 class PDFPage extends StatefulWidget {
   final String imgPath;
