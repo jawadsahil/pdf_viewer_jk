@@ -1,4 +1,14 @@
 # Changelog
+
+## [2.0.0-nullsafety.2]
+
+- Removed obsolete code.
+
+## [2.0.0-nullsafety.1]
+
+- Applied null safety guidelines.
+
+
 ## [1.2.0]
 
 - updated dependencies

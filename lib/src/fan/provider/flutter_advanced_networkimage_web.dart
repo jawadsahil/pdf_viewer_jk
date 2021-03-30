@@ -38,15 +38,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     this.printError = false,
     this.skipRetryStatusCode,
     this.id,
-  })  : assert(url != null),
-        assert(scale != null),
-        assert(useDiskCache != null),
-        assert(retryLimit != null),
-        assert(retryDuration != null),
-        assert(retryDurationFactor != null),
-        assert(timeoutDuration != null),
-        assert(disableMemoryCache != null),
-        assert(printError != null);
+  });
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -55,13 +47,13 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   final double scale;
 
   /// The width the image should decode to and cache in memory.
-  final int width;
+  final int? width;
 
   /// The height the image should decode to and cache in momory.
-  final int height;
+  final int? height;
 
   /// The HTTP headers that will be used with [http] to fetch image from network.
-  final Map<String, String> header;
+  final Map<String, String>? header;
 
   /// The flag control the disk cache will be used or not.
   final bool useDiskCache;
@@ -79,35 +71,35 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   final Duration timeoutDuration;
 
   /// The callback will fire when the image loaded.
-  final VoidCallback loadedCallback;
+  final VoidCallback? loadedCallback;
 
   /// The callback will fire when the image failed to load.
-  final VoidCallback loadFailedCallback;
+  final VoidCallback? loadFailedCallback;
 
   /// The callback will fire when the image loaded from DiskCache.
-  VoidCallback loadedFromDiskCacheCallback;
+  VoidCallback? loadedFromDiskCacheCallback;
 
   /// Displays image from an asset bundle when the image failed to load.
-  final String fallbackAssetImage;
+  final String? fallbackAssetImage;
 
   /// The image will be displayed when the image failed to load
   /// and [fallbackAssetImage] is null.
-  final Uint8List fallbackImage;
+  final Uint8List? fallbackImage;
 
   /// Disk cache rules for advanced control.
-  final CacheRule cacheRule;
+  final CacheRule? cacheRule;
 
   /// Report loading progress and data when fetching image.
-  LoadingProgress loadingProgress;
+  LoadingProgress? loadingProgress;
 
   /// Extract the real url before fetching.
-  final UrlResolver getRealUrl;
+  final UrlResolver? getRealUrl;
 
   /// Receive the data([Uint8List]) and do some manipulations before saving.
-  final _ImageProcessing preProcessing;
+  final _ImageProcessing? preProcessing;
 
   /// Receive the data([Uint8List]) and do some manipulations after saving.
-  final _ImageProcessing postProcessing;
+  final _ImageProcessing? postProcessing;
 
   /// If set to enable, the image will skip [ImageCache].
   ///
@@ -127,9 +119,9 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   final bool printError;
 
   /// The [HttpStatus] code that you can skip retrying if you meet them.
-  final List<int> skipRetryStatusCode;
+  final List<int>? skipRetryStatusCode;
 
-  final String id;
+  final String? id;
 
   @override
   Future<AdvancedNetworkImage> obtainKey(ImageConfiguration configuration) {
@@ -139,7 +131,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   @override
   ImageStreamCompleter load(AdvancedNetworkImage key, DecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key, decode),
+      codec: _loadAsync(key, decode)!,
       scale: key.scale,
       informationCollector: () sync* {
         yield DiagnosticsProperty<ImageProvider>('Image provider', this);
@@ -148,13 +140,13 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     );
   }
 
-  Future<ui.Codec> _loadAsync(AdvancedNetworkImage key, DecoderCallback decode) {
+  Future<ui.Codec>? _loadAsync(AdvancedNetworkImage key, DecoderCallback decode) {
     assert(key == this);
 
     final Uri resolved = Uri.base.resolve(key.url);
 
     return ui.webOnlyInstantiateImageCodecFromUrl(// ignore: undefined_function
-        resolved) as Future<ui.Codec>;
+        resolved) as Future<ui.Codec>?;
   }
 
   @override

@@ -5,13 +5,14 @@ import 'package:flutter/painting.dart';
 import 'fan/zoomable/zoomable_widget.dart';
 
 class PDFPage extends StatefulWidget {
-  final String imgPath;
+  final String? imgPath;
   final int num;
-  final Function(double) onZoomChanged;
-  final int zoomSteps;
-  final double minScale;
-  final double maxScale;
-  final double panLimit;
+  final Function(double)? onZoomChanged;
+  final int? zoomSteps;
+  final double? minScale;
+  final double? maxScale;
+  final double? panLimit;
+
   PDFPage(
     this.imgPath,
     this.num, {
@@ -27,7 +28,7 @@ class PDFPage extends StatefulWidget {
 }
 
 class _PDFPageState extends State<PDFPage> {
-  ImageProvider provider;
+  late ImageProvider provider;
 
   @override
   void didChangeDependencies() {
@@ -44,7 +45,7 @@ class _PDFPageState extends State<PDFPage> {
   }
 
   _repaint() {
-    provider = FileImage(File(widget.imgPath));
+    provider = FileImage(File(widget.imgPath!));
     final resolver = provider.resolve(createLocalImageConfiguration(context));
     resolver.addListener(ImageStreamListener((imgInfo, alreadyPainted) {
       if (!alreadyPainted) setState(() {});

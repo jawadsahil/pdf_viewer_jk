@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 /// Calculate crc32 checksum
 ///
@@ -298,37 +298,33 @@ typedef void LoadingProgress(double progress, Uint8List data);
 String uid(String str) => str.hashCode.toString();
 
 /// Fetch the image from network.
-Future<Uint8List> loadFromRemote(
+Future<Uint8List?> loadFromRemote(
   String url,
-  Map<String, String> header,
+  Map<String, String>? header,
   int retryLimit,
   Duration retryDuration,
   double retryDurationFactor,
   Duration timeoutDuration,
-  LoadingProgress loadingProgress,
-  UrlResolver getRealUrl, {
-  List<int> skipRetryStatusCode,
+  LoadingProgress? loadingProgress,
+  UrlResolver? getRealUrl, {
+  List<int>? skipRetryStatusCode,
   bool printError = false,
-  http.Client client,
+  http.Client? client,
 }) async {
-  assert(url != null);
-  assert(retryLimit != null);
 
   if (retryLimit < 0) retryLimit = 0;
   skipRetryStatusCode ??= [];
 
   /// Retry mechanism.
-  Future<http.Response> run<T>(Future f(), int retryLimit, Duration retryDuration, double retryDurationFactor) async {
+  Future<http.Response?> run<T>(Future f(), int retryLimit, Duration retryDuration, double retryDurationFactor) async {
     for (int t in List.generate(retryLimit + 1, (int t) => t + 1)) {
       try {
-        http.Response res = await f();
-        if (res != null) {
-          if ([HttpStatus.ok, HttpStatus.partialContent].contains(res.statusCode) && res.bodyBytes.length > 0) {
-            return res;
-          } else {
-            if (printError) debugPrint('Failed to load, response status code: ${res.statusCode.toString()}.');
-            if (skipRetryStatusCode.contains(res.statusCode)) return null;
-          }
+        http.Response res = await (f());
+        if ([HttpStatus.ok, HttpStatus.partialContent].contains(res.statusCode) && res.bodyBytes.length > 0) {
+          return res;
+        } else {
+          if (printError) debugPrint('Failed to load, response status code: ${res.statusCode.toString()}.');
+          if (skipRetryStatusCode!.contains(res.statusCode)) return null;
         }
       } catch (e) {
         if (printError) debugPrint(e.toString());
@@ -340,14 +336,14 @@ Future<Uint8List> loadFromRemote(
     return null;
   }
 
-  Uint8List buffer;
+  Uint8List? buffer;
   int bufferPosition = 0;
   bool acceptRangesHeader = false;
 
-  http.Response _response;
+  http.Response? _response;
   _response = await run(() async {
     String _url = url;
-    if (getRealUrl != null) _url = (await getRealUrl()) ?? url;
+    if (getRealUrl != null) _url = (await getRealUrl());
 
     if (loadingProgress != null) {
       client ??= http.Client();
@@ -355,52 +351,52 @@ Future<Uint8List> loadFromRemote(
       if (header != null) _req.headers.addAll(header);
       if (!acceptRangesHeader && bufferPosition != 0) _req.headers[HttpHeaders.rangeHeader] = 'bytes=$bufferPosition-';
 
-      final _res = await client.send(_req).timeout(timeoutDuration);
+      final _res = await client!.send(_req).timeout(timeoutDuration);
       acceptRangesHeader = _res.headers.containsKey(HttpHeaders.acceptRangesHeader) && _res.headers[HttpHeaders.acceptRangesHeader] == 'bytes';
 
       if (!acceptRangesHeader && buffer != null) {
         bufferPosition = 0;
-        buffer.clear();
+        buffer!.clear();
         buffer = null;
       }
 
       final completer = Completer<http.Response>();
-      double _progress;
+      double? _progress;
 
       _res.stream.listen(
         (bytes) {
-          if (buffer == null) buffer = Uint8List((_res.contentLength != null && _res.contentLength != 0) ? _res.contentLength : 1048576);
+          if (buffer == null) buffer = Uint8List((_res.contentLength != null && _res.contentLength != 0) ? _res.contentLength! : 1048576);
 
-          if (buffer.length < bufferPosition + bytes.length) {
+          if (buffer!.length < bufferPosition + bytes.length) {
             // Increase buffer size by 512kb if the received bytes don't fit into the buffer
-            Uint8List oldBuffer = buffer;
+            Uint8List oldBuffer = buffer!;
             buffer = Uint8List(oldBuffer.length + 524288);
-            buffer.setAll(0, oldBuffer);
+            buffer!.setAll(0, oldBuffer);
           }
 
           // Add received bytes to the buffer
-          buffer.setAll(bufferPosition, bytes);
+          buffer!.setAll(bufferPosition, bytes);
           bufferPosition += bytes.length;
 
           if (_res.contentLength != null && _res.contentLength != 0) {
-            final double progress = bufferPosition / _res.contentLength;
-            if (_progress == null || (progress - _progress).abs() >= 0.01) {
+            final double progress = bufferPosition / _res.contentLength!;
+            if (_progress == null || (progress - _progress!).abs() >= 0.01) {
               // Trigger loading progress callback every percent change
-              loadingProgress(progress, Uint8List.view(buffer.buffer, 0, bufferPosition));
+              loadingProgress(progress, Uint8List.view(buffer!.buffer, 0, bufferPosition));
               _progress = progress;
             }
           }
         },
         onDone: () {
-          Uint8List resultData;
+          Uint8List? resultData;
           if (buffer == null) {
             resultData = Uint8List(0);
           } else {
-            resultData = (buffer.length == bufferPosition) ? buffer : Uint8List.view(buffer.buffer, 0, bufferPosition);
+            resultData = (buffer!.length == bufferPosition) ? buffer : Uint8List.view(buffer!.buffer, 0, bufferPosition);
           }
 
           completer.complete(http.Response.bytes(
-            resultData,
+            resultData!,
             _res.statusCode,
             request: _res.request,
             headers: _res.headers,
@@ -408,18 +404,18 @@ Future<Uint8List> loadFromRemote(
             persistentConnection: _res.persistentConnection,
             reasonPhrase: _res.reasonPhrase,
           ));
-          client.close();
+          client!.close();
         },
         cancelOnError: true,
         onError: (e, stackTrace) {
           completer.completeError(e, stackTrace);
-          client.close();
+          client!.close();
         },
       );
 
       return completer.future;
     } else {
-      return await http.get(_url, headers: header).timeout(timeoutDuration);
+      return await http.get(Uri.parse(_url), headers: header).timeout(timeoutDuration);
     }
   }, retryLimit, retryDuration, retryDurationFactor);
   if (_response != null) return _response.bodyBytes;
@@ -427,16 +423,16 @@ Future<Uint8List> loadFromRemote(
   return null;
 }
 
-class DoubleTween extends Tween<double> {
-  DoubleTween({double begin, double end}) : super(begin: begin, end: end);
+class DoubleTween extends Tween<double?> {
+  DoubleTween({double? begin, double? end}) : super(begin: begin, end: end);
 
   @override
-  double lerp(double t) => (begin + (end - begin) * t);
+  double lerp(double t) => (begin! + (end! - begin!) * t);
 }
 
-class OffsetTween extends Tween<Offset> {
-  OffsetTween({Offset begin, Offset end}) : super(begin: begin, end: end);
+class OffsetTween extends Tween<Offset?> {
+  OffsetTween({Offset? begin, Offset? end}) : super(begin: begin, end: end);
 
   @override
-  Offset lerp(double t) => (begin + (end - begin) * t);
+  Offset lerp(double t) => (begin! + (end! - begin!) * t);
 }

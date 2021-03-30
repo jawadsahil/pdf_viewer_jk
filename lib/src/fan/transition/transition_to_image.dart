@@ -1,18 +1,17 @@
-import 'dart:ui';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer_jk/src/fan/provider/flutter_advanced_networkimage.dart';
 
 import '../disk_cache.dart';
 import '../utils.dart';
-
 import 'raw_image.dart' show MyRawImage;
 
 typedef Widget LoadingWidgetBuilder(
   BuildContext context,
   double progress,
-  Uint8List imageData,
+  Uint8List? imageData,
 );
 
 typedef Widget PlaceHolderBuilder(
@@ -22,8 +21,8 @@ typedef Widget PlaceHolderBuilder(
 
 class TransitionToImage extends StatefulWidget {
   const TransitionToImage({
-    Key key,
-    @required this.image,
+    Key? key,
+    required this.image,
     this.width,
     this.height,
     this.borderRadius,
@@ -51,24 +50,7 @@ class TransitionToImage extends StatefulWidget {
     this.loadFailedCallback,
     this.forceRebuildWidget: false,
     this.printError = false,
-  })  : assert(image != null),
-        assert(fit != null),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null),
-        assert(invertColors != null),
-        assert(placeholder != null),
-        assert(duration != null),
-        assert(curve != null),
-        assert(transitionType != null),
-        assert(loadingWidget != null),
-        assert(enableRefresh != null),
-        assert(longPressForceRefresh != null),
-        assert(disableMemoryCache != null),
-        assert(disableMemoryCacheIfFailed != null),
-        assert(forceRebuildWidget != null),
-        assert(printError != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The target image that is displayed.
   final ImageProvider image;
@@ -79,7 +61,7 @@ class TransitionToImage extends StatefulWidget {
   /// aspect ratio. This may result in a sudden change if the size of the
   /// placeholder image does not match that of the target image. The size is
   /// also affected by the scale factor.
-  final double width;
+  final double? width;
 
   /// If non-null, require the image to have this height.
   ///
@@ -87,7 +69,7 @@ class TransitionToImage extends StatefulWidget {
   /// aspect ratio. This may result in a sudden change if the size of the
   /// placeholder image does not match that of the target image. The size is
   /// also affected by the scale factor.
-  final double height;
+  final double? height;
 
   /// The border radius of the rounded corners.
   ///
@@ -95,10 +77,10 @@ class TransitionToImage extends StatefulWidget {
   /// exceed width/height.
   ///
   /// This value is ignored if [clipper] is non-null.
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
-  final Color color;
+  final Color? color;
 
   /// Used to combine [color] with this image.
   ///
@@ -108,7 +90,7 @@ class TransitionToImage extends StatefulWidget {
   /// See also:
   ///
   ///  * [BlendMode], which includes an illustration of the effect of each blend mode.
-  final BlendMode blendMode;
+  final BlendMode? blendMode;
 
   /// How to inscribe the image into the space allocated during layout.
   ///
@@ -171,20 +153,20 @@ class TransitionToImage extends StatefulWidget {
   ///  * [Paint.invertColors], for the dart:ui implementation.
   final bool invertColors;
 
-  final ImageFilter imageFilter;
+  final ImageFilter? imageFilter;
 
   /// Widget displayed while the target [image] failed to load.
   final Widget placeholder;
 
   /// Widget builder (with reload function) displayed
   /// while the target [image] failed to load.
-  final PlaceHolderBuilder placeholderBuilder;
+  final PlaceHolderBuilder? placeholderBuilder;
 
   /// The duration of the fade-out animation for the result.
   final Duration duration;
 
   /// The tween of the fade-out animation for the result.
-  final Tween tween;
+  final Tween? tween;
 
   /// The curve of the fade-out animation for the result.
   final Curve curve;
@@ -197,7 +179,7 @@ class TransitionToImage extends StatefulWidget {
 
   /// Widget builder (with loading progress) displayed
   /// when the target [image] is loading.
-  final LoadingWidgetBuilder loadingWidgetBuilder;
+  final LoadingWidgetBuilder? loadingWidgetBuilder;
 
   /// Enable manually refreshing for network issues.
   final bool enableRefresh;
@@ -213,10 +195,10 @@ class TransitionToImage extends StatefulWidget {
   final bool disableMemoryCacheIfFailed;
 
   /// The callback will fire when the image loaded.
-  final VoidCallback loadedCallback;
+  final VoidCallback? loadedCallback;
 
   /// The callback will fire when the image failed to load.
-  final VoidCallback loadFailedCallback;
+  final VoidCallback? loadFailedCallback;
 
   /// If set to enable, the [loadedCallback] or [loadFailedCallback]
   /// will fire again.
@@ -242,14 +224,14 @@ enum TransitionType {
 }
 
 class _TransitionToImageState extends State<TransitionToImage> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
   Tween<double> _fadeTween = Tween(begin: 0.0, end: 1.0);
   Tween<Offset> _slideTween = Tween(begin: const Offset(0.0, -1.0), end: Offset.zero);
 
-  ImageStream _imageStream;
-  ImageInfo _imageInfo;
-  Uint8List _imageData;
+  ImageStream? _imageStream;
+  ImageInfo? _imageInfo;
+  Uint8List? _imageData;
   double _progress = 0.0;
 
   _TransitionStatus _status = _TransitionStatus.start;
@@ -260,9 +242,9 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
   void initState() {
     _controller = AnimationController(vsync: this, duration: widget.duration)..addListener(() => setState(() {}));
     if (widget.transitionType == TransitionType.fade) {
-      _fadeTween = widget.tween ?? Tween(begin: 0.0, end: 1.0);
+      _fadeTween = widget.tween as Tween<double>? ?? Tween(begin: 0.0, end: 1.0);
     } else if (widget.transitionType == TransitionType.slide) {
-      _slideTween = widget.tween ?? Tween(begin: const Offset(0.0, -1.0), end: Offset.zero);
+      _slideTween = widget.tween as Tween<Offset>? ?? Tween(begin: const Offset(0.0, -1.0), end: Offset.zero);
     }
     _animation = CurvedAnimation(parent: _controller, curve: widget.curve);
     super.initState();
@@ -288,7 +270,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
 
   @override
   void dispose() {
-    _imageStream.removeListener(ImageStreamListener(_updateImage, onError: _catchBadImage));
+    _imageStream!.removeListener(ImageStreamListener(_updateImage, onError: _catchBadImage));
     _controller.dispose();
     super.dispose();
   }
@@ -334,7 +316,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
       }
     }
 
-    final ImageStream oldImageStream = _imageStream;
+    final ImageStream? oldImageStream = _imageStream;
     if (_imageProvider is AdvancedNetworkImage && widget.loadingWidgetBuilder != null) {
       var callback = (_imageProvider as AdvancedNetworkImage).loadingProgress;
       (_imageProvider as AdvancedNetworkImage).loadingProgress = (double progress, Uint8List data) {
@@ -353,20 +335,20 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
 
     _imageStream = _imageProvider.resolve(createLocalImageConfiguration(
       context,
-      size: widget.width != null && widget.height != null ? Size(widget.width, widget.height) : null,
+      size: widget.width != null && widget.height != null ? Size(widget.width!, widget.height!) : null,
     ));
-    if (_imageInfo != null && !reload && (_imageStream.key == oldImageStream?.key)) {
+    if (_imageInfo != null && !reload && (_imageStream!.key == oldImageStream?.key)) {
       if (widget.forceRebuildWidget) {
         if (widget.loadedCallback != null)
-          widget.loadedCallback();
-        else if (widget.loadFailedCallback != null) widget.loadFailedCallback();
+          widget.loadedCallback!();
+        else if (widget.loadFailedCallback != null) widget.loadFailedCallback!();
       }
       setState(() => _status = _TransitionStatus.completed);
     } else {
       setState(() => _status = _TransitionStatus.start);
       oldImageStream?.removeListener(ImageStreamListener(_updateImage, onError: _catchBadImage));
 
-      _imageStream.addListener(
+      _imageStream!.addListener(
         ImageStreamListener(_updateImage, onError: _catchBadImage),
       );
       _resolveStatus();
@@ -377,17 +359,17 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
     _imageInfo = info;
     if (_imageInfo != null) {
       _resolveStatus();
-      if (widget.loadedCallback != null) widget.loadedCallback();
+      if (widget.loadedCallback != null) widget.loadedCallback!();
       if (widget.disableMemoryCache) _imageProvider.evict();
     }
   }
 
-  void _catchBadImage(dynamic exception, StackTrace stackTrace) {
+  void _catchBadImage(dynamic exception, StackTrace? stackTrace) {
     if (widget.printError) print('$exception\n$stackTrace');
     setState(() => _status = _TransitionStatus.failed);
     _resolveStatus();
 
-    if (widget.loadFailedCallback != null) widget.loadFailedCallback();
+    if (widget.loadFailedCallback != null) widget.loadFailedCallback!();
     if (widget.disableMemoryCache || widget.disableMemoryCacheIfFailed) _imageProvider.evict();
   }
 
@@ -395,7 +377,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
   Widget build(BuildContext context) {
     return _status == _TransitionStatus.failed
         ? widget.placeholderBuilder != null
-            ? widget.placeholderBuilder(context, () => _getImage(reload: true))
+            ? widget.placeholderBuilder!(context, () => _getImage(reload: true))
             : widget.enableRefresh
                 ? GestureDetector(
                     onTap: () => _getImage(reload: true),
@@ -404,11 +386,11 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
                 : widget.placeholder
         : _status == _TransitionStatus.start || _status == _TransitionStatus.loading
             ? widget.loadingWidgetBuilder != null
-                ? widget.loadingWidgetBuilder(context, _progress, _imageData)
+                ? widget.loadingWidgetBuilder!(context, _progress, _imageData)
                 : widget.loadingWidget
             : widget.transitionType == TransitionType.fade
                 ? FadeTransition(
-                    opacity: _fadeTween.animate(_animation),
+      opacity: _fadeTween.animate(_animation as Animation<double>),
                     child: widget.borderRadius != null
                         ? ClipRRect(
                             borderRadius: widget.borderRadius,
@@ -417,7 +399,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
                         : buildRawImage(),
                   )
                 : SlideTransition(
-                    position: _slideTween.animate(_animation),
+      position: _slideTween.animate(_animation as Animation<double>),
                     child: widget.borderRadius != null
                         ? ClipRRect(
                             borderRadius: widget.borderRadius,
