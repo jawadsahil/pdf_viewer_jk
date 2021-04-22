@@ -1,4 +1,7 @@
 # Changelog
+## [2.1.0]
+
+- Upgraded dependencies.
 
 ## [2.0.0-nullsafety.2]
 
