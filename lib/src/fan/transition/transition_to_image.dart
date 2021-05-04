@@ -390,7 +390,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
                 : widget.loadingWidget
             : widget.transitionType == TransitionType.fade
                 ? FadeTransition(
-      opacity: _fadeTween.animate(_animation as Animation<double>),
+                    opacity: _fadeTween.animate(_animation as Animation<double>),
                     child: widget.borderRadius != null
                         ? ClipRRect(
                             borderRadius: widget.borderRadius,

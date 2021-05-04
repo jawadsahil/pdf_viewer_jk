@@ -311,7 +311,6 @@ Future<Uint8List?> loadFromRemote(
   bool printError = false,
   http.Client? client,
 }) async {
-
   if (retryLimit < 0) retryLimit = 0;
   skipRetryStatusCode ??= [];
 

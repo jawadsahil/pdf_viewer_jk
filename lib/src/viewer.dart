@@ -34,17 +34,7 @@ class PDFViewer extends StatefulWidget {
     void Function({int? page}) animateToPage,
   )? navigationBuilder;
 
-  PDFViewer({Key? key, required this.document, this.scrollDirection, this.lazyLoad = true, this.indicatorText = Colors.white, this.indicatorBackground = Colors.black54, this.showIndicator = true, this.showPicker = true, this.showNavigation = true, this.enableSwipeNavigation = true, this.tooltip = const PDFViewerTooltip(), this.backgroundNavigation = Colors.white, this.iconNavigation = Colors.black,
-      this.backgorundPickPage,
-      this.iconPickPage,
-      this.navigationBuilder,
-      this.controller,
-      this.indicatorPosition = IndicatorPosition.topRight,
-      this.zoomSteps,
-      this.minScale,
-      this.maxScale,
-      this.panLimit})
-      : super(key: key);
+  PDFViewer({Key? key, required this.document, this.scrollDirection, this.lazyLoad = true, this.indicatorText = Colors.white, this.indicatorBackground = Colors.black54, this.showIndicator = true, this.showPicker = true, this.showNavigation = true, this.enableSwipeNavigation = true, this.tooltip = const PDFViewerTooltip(), this.backgroundNavigation = Colors.white, this.iconNavigation = Colors.black, this.backgorundPickPage, this.iconPickPage, this.navigationBuilder, this.controller, this.indicatorPosition = IndicatorPosition.topRight, this.zoomSteps, this.minScale, this.maxScale, this.panLimit}) : super(key: key);
 
   _PDFViewerState createState() => _PDFViewerState();
 }
@@ -166,9 +156,7 @@ class _PDFViewerState extends State<PDFViewer> {
       body: Stack(
         children: <Widget>[
           PageView.builder(
-            physics: _swipeEnabled && widget.enableSwipeNavigation
-                ? null
-                : NeverScrollableScrollPhysics(),
+            physics: _swipeEnabled && widget.enableSwipeNavigation ? null : NeverScrollableScrollPhysics(),
             onPageChanged: (page) {
               setState(() {
                 _pageNumber = page + 1;
@@ -184,9 +172,7 @@ class _PDFViewerState extends State<PDFViewer> {
                   )
                 : _pages![index]!,
           ),
-          (widget.showIndicator && !_isLoading)
-              ? _drawIndicator()
-              : Container(),
+          (widget.showIndicator && !_isLoading) ? _drawIndicator() : Container(),
         ],
       ),
       floatingActionButton: widget.showPicker && widget.document.count! > 1
@@ -217,8 +203,7 @@ class _PDFViewerState extends State<PDFViewer> {
                     children: <Widget>[
                       Expanded(
                         child: IconButton(
-                          icon: Icon(Icons.first_page,
-                              color: widget.iconNavigation),
+                          icon: Icon(Icons.first_page, color: widget.iconNavigation),
                           tooltip: widget.tooltip.first,
                           onPressed: _pageNumber == 1
                               ? null
@@ -230,8 +215,7 @@ class _PDFViewerState extends State<PDFViewer> {
                       ),
                       Expanded(
                         child: IconButton(
-                          icon: Icon(Icons.chevron_left,
-                              color: widget.iconNavigation),
+                          icon: Icon(Icons.chevron_left, color: widget.iconNavigation),
                           tooltip: widget.tooltip.previous,
                           onPressed: _pageNumber == 1
                               ? null
@@ -244,18 +228,15 @@ class _PDFViewerState extends State<PDFViewer> {
                                 },
                         ),
                       ),
-                      widget.showPicker
-                          ? Expanded(child: Text(''))
-                          : SizedBox(width: 1),
+                      widget.showPicker ? Expanded(child: Text('')) : SizedBox(width: 1),
                       Expanded(
                         child: IconButton(
-                          icon: Icon(Icons.chevron_right,
-                              color: widget.iconNavigation),
+                          icon: Icon(Icons.chevron_right, color: widget.iconNavigation),
                           tooltip: widget.tooltip.next,
                           onPressed: _pageNumber == widget.document.count
                               ? null
                               : () {
-                            _pageNumber++;
+                                  _pageNumber++;
                                   if (widget.document.count! < _pageNumber) {
                                     _pageNumber = widget.document.count ?? 0;
                                   }
@@ -265,13 +246,12 @@ class _PDFViewerState extends State<PDFViewer> {
                       ),
                       Expanded(
                         child: IconButton(
-                          icon: Icon(Icons.last_page,
-                              color: widget.iconNavigation),
+                          icon: Icon(Icons.last_page, color: widget.iconNavigation),
                           tooltip: widget.tooltip.last,
                           onPressed: _pageNumber == widget.document.count
                               ? null
                               : () {
-                            _pageNumber = widget.document.count ?? 0;
+                                  _pageNumber = widget.document.count ?? 0;
                                   _jumpToPage();
                                 },
                         ),

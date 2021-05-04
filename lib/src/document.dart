@@ -21,8 +21,7 @@ class PDFDocument {
     PDFDocument document = PDFDocument();
     document._filePath = f.path;
     try {
-      var pageCount =
-          await _channel.invokeMethod('getNumberOfPages', {'filePath': f.path});
+      var pageCount = await _channel.invokeMethod('getNumberOfPages', {'filePath': f.path});
       document.count = document.count = int.parse(pageCount);
     } catch (e) {
       throw Exception('Error reading PDF!');
@@ -65,8 +64,7 @@ class PDFDocument {
     PDFDocument document = PDFDocument();
     document._filePath = file.path;
     try {
-      var pageCount = await _channel
-          .invokeMethod('getNumberOfPages', {'filePath': file.path});
+      var pageCount = await _channel.invokeMethod('getNumberOfPages', {'filePath': file.path});
       document.count = document.count = int.parse(pageCount);
     } catch (e) {
       throw Exception('Error reading PDF!');
@@ -87,8 +85,7 @@ class PDFDocument {
   }) async {
     assert(page > 0);
     if (_preloaded && _pages.isNotEmpty) return _pages[page - 1];
-    var data = await _channel
-        .invokeMethod('getPage', {'filePath': _filePath, 'pageNumber': page});
+    var data = await _channel.invokeMethod('getPage', {'filePath': _filePath, 'pageNumber': page});
     return new PDFPage(
       data,
       page,

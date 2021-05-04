@@ -1,4 +1,9 @@
 # Changelog
+## [2.1.1]
+
+- Upgraded dependencies.
+- Dart format code
+
 ## [2.1.0]
 
 - Upgraded dependencies.
