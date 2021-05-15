@@ -1,4 +1,10 @@
 # Changelog
+## [2.1.2]
+
+- Merge pull request #13.
+- Upgraded dependencies.
+- Dart format code
+
 ## [2.1.1]
 
 - Upgraded dependencies.

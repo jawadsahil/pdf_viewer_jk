@@ -399,7 +399,7 @@ class _TransitionToImageState extends State<TransitionToImage> with SingleTicker
                         : buildRawImage(),
                   )
                 : SlideTransition(
-      position: _slideTween.animate(_animation as Animation<double>),
+                    position: _slideTween.animate(_animation as Animation<double>),
                     child: widget.borderRadius != null
                         ? ClipRRect(
                             borderRadius: widget.borderRadius,
