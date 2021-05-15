@@ -21,7 +21,11 @@ static NSString* kFileName = @"";
               result([self getPage:filePath ofPage:pageNumber]);
           } else if ([@"getNumberOfPages" isEqualToString:call.method]) {
               NSString * filePath = call.arguments[@"filePath"];
-              result([self getNumberOfPages:filePath]);
+              bool clearCacheDir = call.arguments[@"clearCacheDir"];
+              result([self getNumberOfPages:filePath clearCacheDir:clearCacheDir]);
+          } else if ([@"clearCacheDir" isEqualToString:call.method]) {
+              [self clearCacheDir];
+              result(nil);
           }
           else {
               result(FlutterMethodNotImplemented);
@@ -29,7 +33,22 @@ static NSString* kFileName = @"";
       });
 }
 
--(NSString *)getNumberOfPages:(NSString *)url
+- (void)clearCacheDir {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePathAndDirectory = [documentsDirectory stringByAppendingPathComponent:kDirectory];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePathAndDirectory]) {
+        NSLog(@"[PdfViewerJkPlugin] Removing old documents cache");
+        NSError *error;
+
+        if (![[NSFileManager defaultManager] removeItemAtPath:filePathAndDirectory error:&error]) {
+            NSLog(@"Clear directory error: %@", error);
+        }
+    }
+}
+
+-(NSString *)getNumberOfPages:(NSString *)url clearCacheDir:(bool)clearCacheDir
 {
     NSURL * sourcePDFUrl;
     if([url containsString:kFilePath]){
@@ -45,9 +64,8 @@ static NSString* kFileName = @"";
     NSError *error;
 
     // Clear cache folder
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filePathAndDirectory]) {
-        NSLog(@"[PdfViewerJkPlugin] Removing old documents cache");
-        [[NSFileManager defaultManager] removeItemAtPath:filePathAndDirectory error:&error];
+    if (clearCacheDir) {
+        [self clearCacheDir];
     }
 
     if (![[NSFileManager defaultManager] createDirectoryAtPath:filePathAndDirectory

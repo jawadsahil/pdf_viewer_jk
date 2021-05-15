@@ -58,7 +58,7 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
                     public void run() {
                         switch (call.method) {
                             case "getNumberOfPages":
-                                final String numResult = getNumberOfPages((String) call.argument("filePath"));
+                                final String numResult = getNumberOfPages((String) call.argument("filePath"), (boolean) call.argument("clearCacheDir"));
                                 mainThreadHandler.post(new Runnable(){
                                     @Override
                                     public void run() {
@@ -75,6 +75,15 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
                                     }
                                 });
                                 break;
+                            case "clearCacheDir":
+                                clearCacheDir();
+                                mainThreadHandler.post(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        result.success(null);
+                                    }
+                                });
+                                break;                                
                             default:
                                 result.notImplemented();
                                 break;
@@ -84,10 +93,12 @@ public class PdfViewerJkPlugin implements MethodCallHandler {
         );
     }
 
-    private String getNumberOfPages(String filePath) {
+    private String getNumberOfPages(String filePath, boolean clearCacheDir) {
         File pdf = new File(filePath);
         try {
-            clearCacheDir();
+            if (clearCacheDir) {
+                clearCacheDir();
+            }
             PdfRenderer renderer = new PdfRenderer(ParcelFileDescriptor.open(pdf, ParcelFileDescriptor.MODE_READ_ONLY));
             Bitmap bitmap;
             final int pageCount = renderer.getPageCount();
