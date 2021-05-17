@@ -95,7 +95,7 @@ class PDFDocument {
   ///
   /// This is normally done automatically by methods such as [fromFile],
   /// [fromURL], and [fromAsset], unless they are run with the
-  /// `clearPreviewCache` parameter set to `true`.
+  /// `clearPreviewCache` parameter set to `false`.
   static Future<void> clearPreviewCache() async {
     await _channel.invokeMethod('clearCacheDir');
   }
