@@ -1,4 +1,8 @@
 # Changelog
+## [2.1.3]
+
+- Fixed issue #16 . https://github.com/jawadsahil/pdf_viewer_jk/issues/16
+
 ## [2.1.2]
 
 - Merge pull request #13.
