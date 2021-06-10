@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:pdf_viewer_jk/pdf_viewer_jk.dart';
 
 enum IndicatorPosition { topLeft, topRight, bottomLeft, bottomRight }
@@ -139,9 +139,36 @@ class _PDFViewerState extends State<PDFViewer> {
 
   _pickPage() {
     showDialog<int>(
+        barrierDismissible: false,
+        barrierLabel: "ad",
         context: context,
         builder: (BuildContext context) {
-          return NumberPicker(minValue: 1, maxValue: widget.document.count!, value: _pageNumber, onChanged: (int n) {});
+          int pn = _pageNumber;
+          SpinBox spinBox = SpinBox(
+            min: 1,
+            max: (widget.document.count ?? 1).toDouble(),
+            value: _pageNumber.toDouble(),
+            onChanged: (value) {
+              pn = value.round();
+              print(value);
+            },
+          );
+          return AlertDialog(
+            title: Text('Choose page number'),
+            content: spinBox,
+            actions: <Widget>[
+              new TextButton(
+                  child: new Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+              new TextButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop(pn);
+                  })
+            ],
+          );
         }).then((int? value) {
       if (value != null) {
         _pageNumber = value;

@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    loadDocument(0);
+    loadDocument(1);
   }
 
   loadDocument(value) async {
@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
       title = "Loading";
     });
     if (value == 1) {
-      document = await PDFDocument.fromURL("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf");
+      document = await PDFDocument.fromURL("https://www.escaux.com/rsrc/EscauxCustomerDocs/DRD_T38Support_AdminGuide/T38_TEST_PAGES.pdf");
     } else {
       document = await PDFDocument.fromAsset('assets/sample.pdf');
     }
