@@ -21,7 +21,7 @@ static NSString* kFileName = @"";
               result([self getPage:filePath ofPage:pageNumber]);
           } else if ([@"getNumberOfPages" isEqualToString:call.method]) {
               NSString * filePath = call.arguments[@"filePath"];
-              bool clearCacheDir = call.arguments[@"clearCacheDir"];
+              NSNumber * clearCacheDir = call.arguments[@"clearCacheDir"];
               result([self getNumberOfPages:filePath clearCacheDir:clearCacheDir]);
           } else if ([@"clearCacheDir" isEqualToString:call.method]) {
               [self clearCacheDir];
@@ -48,7 +48,7 @@ static NSString* kFileName = @"";
     }
 }
 
--(NSString *)getNumberOfPages:(NSString *)url clearCacheDir:(bool)clearCacheDir
+-(NSString *)getNumberOfPages:(NSString *)url clearCacheDir:(NSNumber *)clearCacheDir
 {
     NSURL * sourcePDFUrl;
     if([url containsString:kFilePath]){
@@ -64,7 +64,7 @@ static NSString* kFileName = @"";
     NSError *error;
 
     // Clear cache folder
-    if (clearCacheDir) {
+    if ([clearCacheDir boolValue]) {
         [self clearCacheDir];
     }
 
