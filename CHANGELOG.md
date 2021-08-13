@@ -1,4 +1,7 @@
 # Changelog
+## [2.1.5]
+- updated dependencies
+
 ## [2.1.4]
 - Fixed Issue #15 . https://github.com/jawadsahil/pdf_viewer_jk/issues/15
 - removed numberpicker package

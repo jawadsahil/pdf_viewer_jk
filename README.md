@@ -1,7 +1,14 @@
-# pdf_viewer_jk
-A flutter plugin for viewing PDF files in mobile app (Android & iOS).
-based on https://github.com/CrossPT/flutter_plugin_pdf_viewer
-Also, upgrades made by Damodar Lohani - https://github.com/CrossPT/flutter_plugin_pdf_viewer/pull/63 are added.
+# PDF Viewer (JK)
+ A flutter plugin for viewing PDF files in mobile app (Android & iOS)
+
+#### Pub.dev
+        https://pub.dev/packages/pdf_viewer_jk
+
+#### Github
+        https://github.com/jawadsahil/pdf_viewer_jk/
+
+
+> This plugin is based on [Cross PT flutter plugin pdf viewer](https://github.com/CrossPT/flutter_plugin_pdf_viewer). Upgrades by [Damodar Lohani](https://github.com/CrossPT/flutter_plugin_pdf_viewer/pull/63) are also incorporated.
 
 
 ## Installation

@@ -1,6 +1,6 @@
 name: pdf_viewer_jk
 description: A flutter plugin for viewing PDF files in mobile app (Android & iOS).
-version: 2.1.4
+version: 2.1.5
 repository: https://github.com/jawadsahil/pdf_viewer_jk
 homepage: https://jawad.pro
 
@@ -12,9 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  async: ^2.7.0
-  flutter_cache_manager: ^3.1.0
-  flutter_spinbox: ^0.5.2
+  async: ^2.8.2
+  flutter_cache_manager: ^3.1.2
+  flutter_spinbox: ^0.5.4
   flutter_svg: ^0.22.0
   http: ^0.13.3
   path_provider: ^2.0.2
